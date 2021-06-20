@@ -1,0 +1,82 @@
+---
+openapi: 3.0.0
+info:
+  title: TrueLayer software engineering challenge
+  description: |
+    Our Own fun Pokedex that returns Pokemon information using
+    [pokeapi](https://pokeapi.co/) and [funtranslations](https://funtranslations.com/)
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/jernejg/pokedex-api/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: pokemon
+  description: Basic Pokemon information
+- name: fun Pokemon
+  description: Pokemon with fun translation
+paths:
+  /pokemon/{pokemonName}:
+    get:
+      tags:
+      - pokemon
+      summary: Retrieves basic Pokemon information
+      operationId: GetBasicPokemonInfo
+      parameters:
+      - name: pokemonName
+        in: path
+        description: Pokemon's name
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicPokemonInfoModel'
+        "404":
+          description: Pokemon not found
+        "502":
+          description: Upstream service (PokeApi) not available
+  /pokemon/translated/{pokemonName}:
+    get:
+      tags:
+      - fun Pokemon
+      summary: Retrieves basic Pokemon information with fun translation
+      operationId: GetFunPokemonInfo
+      parameters:
+      - name: pokemonName
+        in: path
+        description: Pokemon's name
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicPokemonInfoModel'
+        "404":
+          description: Pokemon not found
+        "502":
+          description: Upstream service (Fun translations) not available
+components:
+  schemas:
+    BasicPokemonInfoModel:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        habitat:
+          type: string
+        isLegendary:
+          type: boolean
