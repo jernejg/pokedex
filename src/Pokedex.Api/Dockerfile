@@ -6,10 +6,10 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["Pokedex.Api/Pokedex.Api.csproj", "Pokedex.Api/"]
-RUN dotnet restore "Pokedex.Api/Pokedex.Api.csproj"
+COPY ["src/Pokedex.Api/Pokedex.Api.csproj", "src/Pokedex.Api/"]
+RUN dotnet restore "src/Pokedex.Api/Pokedex.Api.csproj"
 COPY . .
-WORKDIR "/src/Pokedex.Api"
+WORKDIR "/src/src/Pokedex.Api"
 RUN dotnet build "Pokedex.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
