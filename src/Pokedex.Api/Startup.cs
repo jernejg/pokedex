@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pokedex.Services.FunTranslations;
 using Pokedex.Services.PokeApi;
+using Serilog;
 using System;
 using System.Reflection;
 
@@ -31,6 +32,10 @@ namespace Pokedex.Api
 		{
 			services.AddProblemDetails(setup =>
 			{
+				setup.OnBeforeWriteDetails = (ctx, pd) =>
+				{
+					Log.Error(pd.Title);
+				};
 				setup.IncludeExceptionDetails = (ctx, exception) => _env.IsDevelopment();
 				setup.Map<SpecieNotFoundException>((exception) =>
 					new ProblemDetails()
@@ -46,6 +51,7 @@ namespace Pokedex.Api
 						Title = exception.Message
 					}
 				);
+
 			});
 			services.AddMediatR(Assembly.GetExecutingAssembly());
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
