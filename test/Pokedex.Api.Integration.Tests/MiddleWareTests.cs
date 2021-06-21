@@ -53,5 +53,24 @@ namespace Pokedex.Integration.Tests
 
 			Assert.Equal(HttpStatusCode.BadGateway, response.StatusCode);
 		}
+
+		[Fact]
+		public async Task Translation_Service_Exception_Falls_Back_To_Original_Pokemon_Description_Test()
+		{
+			var fakePokeService = new FakePokeApiService();
+			var fakeTranslationService = new FakeFunTranslationService(true);
+
+			var client = _factory.WithWebHostBuilder(builder =>
+			{
+				builder.ConfigureTestServices(services =>
+				{
+					services.AddSingleton<IPokeApiService>(fakePokeService);
+					services.AddSingleton<IFunTranslationsService>(fakeTranslationService);
+				});
+			}).CreateClient();
+
+			var response = await client.GetAsync($"{Helpers.FUN_ENDPOINT}/mewtwo");
+			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+		}
 	}
 }

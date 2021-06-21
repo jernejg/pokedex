@@ -23,16 +23,19 @@ namespace Pokedex.Integration.Tests
 
 		[Theory]
 		[InlineData(Helpers.BASIC_ENDPOINT, "mewtwo", "desc")]
+		[InlineData(Helpers.FUN_ENDPOINT, "mewtwo", "translated")]
 		public async Task Happy_Path_Test(string endpoint, string pokeName, string expectedDescription)
 		{
 			var fakePokeService = new FakePokeApiService();
 			var expectedModel = await fakePokeService.GetValidSpecieAsync(pokeName);
-			
+			var fakeTranslationService = new FakeFunTranslationService();
+
 			var client = _factory.WithWebHostBuilder(builder =>
 			{
 				builder.ConfigureTestServices(services =>
 				{
 					services.AddSingleton<IPokeApiService>(fakePokeService);
+					services.AddSingleton<IFunTranslationsService>(fakeTranslationService);
 				});
 			}).CreateClient();
 

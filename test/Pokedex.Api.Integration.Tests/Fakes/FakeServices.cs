@@ -1,4 +1,5 @@
-﻿using Pokedex.Services.PokeApi;
+﻿using Pokedex.Services.FunTranslations;
+using Pokedex.Services.PokeApi;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -28,6 +29,54 @@ namespace Pokedex.Integration.Tests.Fakes
 				Habitat = new Habitat() { Name = "cave" },
 				IsLegendary = true,
 				FlavorTextEntries = new List<FlavorTextEntry>() { new FlavorTextEntry() { FlavorText = "desc", Language = new Language() { Name = "en" } } }
+			});
+		}
+	}
+
+	public class FakeFunTranslationService : IFunTranslationsService
+	{
+		private readonly bool _shouldThrowTranslationServiceException;
+
+		public FakeFunTranslationService(bool shouldThrowTranslationServiceException = false)
+		{
+			_shouldThrowTranslationServiceException = shouldThrowTranslationServiceException;
+		}
+		public Task<TranslateResponse> GetShakespeareTranslationsAsync(string text)
+		{
+			if (_shouldThrowTranslationServiceException)
+				throw new TranslationServiceException();
+
+			return Task.FromResult(new TranslateResponse()
+			{
+				Success = new Success()
+				{
+					Total = 1
+				},
+				Contents = new Contents()
+				{
+					Text = text,
+					Translated = "translated",
+					Translation = "shakespeare"
+				}
+			});
+		}
+
+		public Task<TranslateResponse> GetYodaTranslationsAsync(string text)
+		{
+			if (_shouldThrowTranslationServiceException)
+				throw new TranslationServiceException();
+			return Task.FromResult(new TranslateResponse()
+			{
+				Success = new Success()
+				{
+					Total = 1
+				},
+				Contents = new Contents()
+				{
+					Text = text,
+					Translated = "translated",
+					Translation = "yoda"
+				}
 			});
 		}
 	}

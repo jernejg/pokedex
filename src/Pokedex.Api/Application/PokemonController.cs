@@ -22,5 +22,12 @@ namespace Pokedex
 			var basicPokemonInfo = await _mediator.Send(new BasicPokemonInfoRequest(pokemonName), cancellationToken);
 			return Ok(basicPokemonInfo);
 		}
+
+		[HttpGet("translated/{pokemonName}")]
+		public async Task<IActionResult> GetFunPokemonInfo(string pokemonName, CancellationToken cancellationToken)
+		{
+			var funPokemonInfo = await _mediator.Send(new FunPokemonInfoRequest(pokemonName), cancellationToken);
+			return Ok(funPokemonInfo);
+		}
 	}
 }

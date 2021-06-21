@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Pokedex.Services.FunTranslations;
 using Pokedex.Services.PokeApi;
 using System;
 using System.Reflection;
@@ -31,12 +32,30 @@ namespace Pokedex.Api
 			services.AddProblemDetails(setup =>
 			{
 				setup.IncludeExceptionDetails = (ctx, exception) => _env.IsDevelopment();
+				setup.Map<SpecieNotFoundException>((exception) =>
+					new ProblemDetails()
+					{
+						Status = 404,
+						Title = exception.Message
+					}
+								);
+				setup.Map<PokemonServiceException>((exception) =>
+					new ProblemDetails()
+					{
+						Status = 502,
+						Title = exception.Message
+					}
+				);
 			});
 			services.AddMediatR(Assembly.GetExecutingAssembly());
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
 			services.AddHttpClient<IPokeApiService, PokeApiRestService>(client =>
 			{
 				client.BaseAddress = new Uri(Configuration["ExternalServices:PokeApi:Uri"]);
+			});
+			services.AddHttpClient<IFunTranslationsService, FunTranslationsRestApiService>(client =>
+			{
+				client.BaseAddress = new Uri(Configuration["ExternalServices:FunTranslations:Uri"]);
 			});
 			services.AddProblemDetails(setup =>
 			{
